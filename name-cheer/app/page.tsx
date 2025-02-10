@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // コメントの型定義
 type CommentType = {
@@ -10,6 +10,15 @@ type CommentType = {
 
 export default function Home() {
   const [comments, setComments] = useState<CommentType[]>([]);
+
+  // 初期データの読み込み: localStorageからデータを取得
+  useEffect(() => {
+    const storedComments = localStorage.getItem('comments');
+    if (storedComments) {
+      setComments(JSON.parse(storedComments)); // localStorageから取得したデータをパースしてセット
+    }
+  }, []);
+
   // 全コメントのいいね数の平均を計算
   const avgFav = comments.length > 0
     ? comments.reduce((acc, comment) => acc + comment.fav, 0) / comments.length
@@ -20,6 +29,7 @@ export default function Home() {
       ...prevComments,
       { content: newComment, fav: 0, id: prevComments.length + 1 },
     ]);
+    localStorage.setItem('comments', JSON.stringify(comments)); // localStorageにデータを保存
   };
 
   const incrementFav = (id: number) => {
@@ -28,6 +38,7 @@ export default function Home() {
         comment.id === id ? { ...comment, fav: comment.fav + 1 } : comment
       )
     );
+    localStorage.setItem('comments', JSON.stringify(comments)); // localStorageにデータを保存
   };
 
   // 🔽 追加：全てのコメントの fav を +1 する関数
@@ -35,6 +46,12 @@ export default function Home() {
     setComments((prevComments) =>
       prevComments.map((comment) => ({ ...comment, fav: comment.fav + 1 }))
     );
+    localStorage.setItem('comments', JSON.stringify(comments)); // localStorageにデータを保存
+  };
+
+  const clearLocalStorage = () => {
+    localStorage.clear(); // 全てのデータを削除
+    setComments([]); // コメント状態を空にリセット
   };
 
   return (
@@ -48,6 +65,10 @@ export default function Home() {
       <InputCommentForm addComment={addComment} />
       <br />
       <ClappingButton incrementAllFav={incrementAllFav} /> {/* 修正：関数を渡す */}
+      <br /><br />
+      <button onClick={clearLocalStorage} style={{ padding: '5px 10px', border: 'gray 2px solid', borderRadius: '5px' }}>
+        localStorageをクリア
+      </button>
     </div>
   );
 }
@@ -74,7 +95,7 @@ function Comment({ comments, incrementFav, avgFav }: CommentProps) {
             display: 'flex',
             justifyContent: 'left'
           }}>
-            <p style={{ color: styleRule[0]}}>No.{comment.id}</p>
+            <p style={{ color: styleRule[0] }}>No.{comment.id}</p>
             <p>{comment.content}</p>
             <FavButton fav={comment.fav} id={comment.id} incrementFav={incrementFav} styleRule={styleRule} />
           </li>
@@ -132,7 +153,7 @@ function FavButton({ fav, id, incrementFav, styleRule }: FavButtonProps) {
 
   return (
     <button style={{ color: styleRule[2] }} onClick={handleClick}>
-      ♥{fav}
+      ★{fav}
     </button>
   );
 }
