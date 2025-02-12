@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Chat from './components/Chat';
 
 // コメントの型定義
 type CommentType = {
@@ -58,17 +59,19 @@ export default function Home() {
     <div style={{ textAlign: 'center' }}>
       <h1 style={{ fontSize: '2em' }}>Name Cheer</h1>
       <br />
-      <h2 style={{ fontSize: '1.5em' }}>コメント一覧</h2>
+      {/* <h2 style={{ fontSize: '1.5em' }}>コメント一覧</h2> */}
       <br />
-      <Comment comments={comments} incrementFav={incrementFav} avgFav={avgFav} />
+      <Chat />
+      <br />
+      {/* <Comment comments={comments} incrementFav={incrementFav} avgFav={avgFav} />
       <br />
       <InputCommentForm addComment={addComment} />
       <br />
       <ClappingButton incrementAllFav={incrementAllFav} /> {/* 修正：関数を渡す */}
-      <br /><br />
+      {/* <br /><br />
       <button onClick={clearLocalStorage} style={{ padding: '5px 10px', border: 'gray 2px solid', borderRadius: '5px' }}>
         localStorageをクリア
-      </button>
+      </button> */}
     </div>
   );
 }
