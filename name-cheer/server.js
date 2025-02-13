@@ -18,16 +18,18 @@ app.prepare().then(() => {
   const io = new Server(server);
 
   io.on('connection', (socket) => {
-    console.log('A user connected');
-    console.log('Socket ID:', socket.id);
-    
-    socket.on('message', (msg) => {
-      console.log('Message received:', msg);
-      io.emit('message', msg); // 全クライアントにメッセージを送信
+
+    socket.on('sign-in', (name) => {
+      console.log('Name received:', name, socket.id);
+
+      socket.on('message', (msg) => {
+        console.log('Message received:', msg);
+        io.emit('message', msg); // 全クライアントにメッセージを送信
+      });
     });
 
     socket.on('disconnect', () => {
-      console.log('A user disconnected');
+      console.log('A user disconnected', socket.id); // socket.id 分からない
     });
   });
 
